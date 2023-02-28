@@ -64,10 +64,6 @@ public final class NatsReader implements Supplier<List<EventMessage>> , NatsCons
             description = "The maximum number of partitions with any stream. By default its 60,000" )
     public Integer numberOfPartitions;
 
-    @CommandLine.Option(names = { "-rcIdHash" }, required = true, paramLabel = "CustIdHash",
-            description = "Root CustomerId Hash for the Event")
-    public Integer rcIdHash;
-
 
     enum TestCases { publishAllStreams  }
     @CommandLine.Option(names = { "-tst", "--testName" }, required = true, paramLabel = "TestNameToExecute",
