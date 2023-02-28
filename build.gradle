@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {url("https://artifactory.labs.optiva.com/artifactory/repo")}
+}
+
+dependencies {
+    //implementation "com.optiva.oce.gg.eventhistory:common:22.1.1-47cb870-SNAPSHOT"
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    // https://mvnrepository.com/artifact/com.dslplatform/dsl-json-processor
+    implementation group: 'com.dslplatform', name: 'dsl-json-processor', version: '1.9.9'
+
+    // https://mvnrepository.com/artifact/com.dslplatform/dsl-json-java8
+    implementation group: 'com.dslplatform', name: 'dsl-json-java8', version: '1.9.9'
+    //invoke the compile time databinding
+    annotationProcessor 'com.dslplatform:dsl-json-java8:1.9.9'
+    implementation 'io.nats:jnats:2.16.8'
+    testImplementation 'io.nats:jnats-server-runner:1.0.14'
+
+    implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
+    implementation 'org.apache.logging.log4j:log4j-api:2.14.1'
+
+    // This dependency is used by the application.
+    implementation 'info.picocli:picocli:4.6.1'
+    annotationProcessor 'info.picocli:picocli-codegen:4.6.1'
+}
+
+test {
+    useJUnitPlatform()
+}
+project.configurations.implementation.setCanBeResolved(true)
+
+task fatJar(type: Jar) {
+    duplicatesStrategy(DuplicatesStrategy.WARN)
+    manifest {
+        attributes 'Implementation-Title': 'Publish Events to Nats',
+                'Implementation-Version': 2,
+                'Main-Class': 'addevents.NatsReader'
+    }
+    //baseName = project.name + '-all'
+    from { configurations.implementation.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
